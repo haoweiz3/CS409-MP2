@@ -72,7 +72,7 @@ export default function GalleryView() {
     return () => {
       cancelled = true;
     };
-  }, [activeFilters, categories]);
+  }, [activeFilters, categories, setMeals]);
 
   return (
     <div className="page gallery-page">
