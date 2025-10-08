@@ -24,19 +24,25 @@ export default function DetailView() {
   }, [id, meals]);
 
   useEffect(() => {
-    if (!id) return;
-    if (meal && meal.strCategory) return;
-
     let cancelled = false;
+
     async function fetchDetail() {
+      if (!id) return;
+
+      const isPartial =
+        !meal || !meal.strCategory || !meal.strArea || !meal.strInstructions;
+
+      if (!isPartial) return;
+
       setLoading(true);
       setError(null);
+
       try {
         const res = await api.get("/lookup.php", { params: { i: id } });
+        if (cancelled) return;
+
         const item = (res.data?.meals ?? [])[0] ?? null;
-        if (!cancelled && item) {
-          setMeal(item);
-        }
+        setMeal(item);
       } catch (err) {
         console.error(err);
         if (!cancelled) setError("Failed to load meal details.");
@@ -44,8 +50,8 @@ export default function DetailView() {
         if (!cancelled) setLoading(false);
       }
     }
-    fetchDetail();
 
+    fetchDetail();
     return () => {
       cancelled = true;
     };
